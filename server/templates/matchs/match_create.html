@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <title>Document</title>
+</head>
+<body>
+    <body>
+        {% block content %}
+<form action="{% url 'matchs:match_create' %}" method="post">
+    {% csrf_token %}
+  <div class="form-group", id="list">
+    <label for="matchname">試合名</label>
+    <input name="match_name", type="text" class="form-control" id="matchname" aria-describedby="emailHelp" placeholder="試合名">
+  </div>
+  <div class="form-group">
+    <label for="number_of_court">コート数</label>
+    <input name="number_of_court", type="number" class="form-control" id="list_0" placeholder="コート数">
+  </div>
+  <div id="input_pluralBox">
+    <div id="input_plural">
+        <label for="membername">メンバー名</label>
+        <input name="member_name", type="text" class="form-control" id="InputNumberOfCourt" placeholder="コート数">
+        <input type="button" value="＋" class="add pluralBtn">
+        <input type="button" value="－" class="del pluralBtn">
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).on("click", ".add", function() {
+    $(this).parent().clone(true).insertAfter($(this).parent());
+});
+$(document).on("click", ".del", function() {
+    var target = $(this).parent();
+    if (target.parent().children().length > 1) {
+        target.remove();
+    }
+});
+</script>
+{% endblock content %}
+    </body>
+</body>
+</html>
