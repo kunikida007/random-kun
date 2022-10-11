@@ -11,7 +11,7 @@
 <body>
   <form action="{% url 'matchs:match_start' id %}" method="post">
     {% csrf_token %}
-    {% for match_members in start_match_list %}
+    {% for match_members in match_list %}
     <button name=btn_game{{forloop.counter}}_end type="submit" class="btn btn-primary", >コート{{forloop.counter}}終了</button> 
     　<caption>コート{{forloop.counter}}</caption>
       <table class="table">

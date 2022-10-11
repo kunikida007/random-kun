@@ -1,3 +1,4 @@
+from email.policy import default
 import uuid as uuid_lib
 
 from django.contrib.auth import get_user_model
@@ -20,7 +21,10 @@ class Match(TimeStampedModel):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     match_name = models.CharField(max_length=10)
     number_of_court = models.IntegerField()
-    match_list = ArrayField(models.IntegerField(blank=True, null=True), null=True)
+    match_list = ArrayField(
+        ArrayField(ArrayField(models.CharField(max_length=10, null=True), null=True), default=list),
+        default=list,
+    )
 
     def __str__(self):
         return self.match_name
@@ -38,6 +42,7 @@ class Match(TimeStampedModel):
 class Member(TimeStampedModel):
     member_name = models.CharField(max_length=10)
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    court_number = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.member_name}-{self.match.match_name}"
