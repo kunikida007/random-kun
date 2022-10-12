@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 
 from .forms import UserCreationForm, LoginForm
 
@@ -11,7 +11,7 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect(to='users:login')
+            return redirect(to='common:home')
     else:
         form = UserCreationForm() 
     param = {
@@ -23,3 +23,7 @@ def signup(request):
 class LoginView(LoginView):
     template_name = 'users/login.html'
     form_class = LoginForm
+    
+    
+class LogoutView(LogoutView):
+    template_name = 'common/home.html'

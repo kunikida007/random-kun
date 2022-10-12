@@ -8,20 +8,31 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     </head>
+    {% block content %}
     <body>
-        {% block content %}
-<form action="{% url 'users:login' %}" method="post">
-  <div class="form-group">
-    <label for="exampleInputEmail1">Email address</label>
-    <input name="email", type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-  </div>
-  <div class="form-group">
-    <label for="exampleInputPassword1">Password</label>
-    <input name="password", type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
-{% endblock content %}
-    </body>
+    <form method="post" action="{% url 'users:login' %}" class="form-group">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+          {% for error in form.non_field_errors %}
+            <p{% if forloop.last %} class="mb-0"{% endif %}>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% for item in form %}
+          <div class="form-group">
+              <label for="{{item.id_for_label}}">{{item.label}}</label>
+              <input
+                  type="{{item.field.widget.input_type}}"
+                  class="form-control"
+                  {% if item.field.required %}required{% endif %}
+                  name="{{item.name}}"
+                  id="{{item.id_for_label}}">
+          </div>
+      {% endfor %}
+      <button type="submit" class="submit btn btn-primary">ログイン</button>
+      <input type="hidden" name="next" value="{{ next }}"/>
+  </form>
+</body>
+{% endblock %}
 </html>

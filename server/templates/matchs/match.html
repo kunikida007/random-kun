@@ -1,3 +1,4 @@
+{% extends "common/base.html"%}
 {% load static %}
 <!DOCTYPE html>
 <html lang="jp">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <title>Document</title>
 </head>
+{% block content %}
 <body>
     <table class="table">
         <thead>
@@ -26,7 +28,9 @@
       </table> 
     <form action="{% url 'matchs:match' id %}" method="post">
         {% csrf_token %}
-        <button name=btn_start type="submit" class="btn btn-primary">start</button> 
+        <button name=btn_start type="submit" class="btn btn-primary">開始する</button>
+        <button name=btn_update type="submit" class="btn btn-primary">修正する</button> 
     </form>
 </body>
+{% endblock %}
 </html>

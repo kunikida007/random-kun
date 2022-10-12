@@ -8,7 +8,6 @@ class UserCreationForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = User
-        print(UserCreationForm.Meta.fields)
         fields = ("email", "username", 'password1', 'password2')
 
 

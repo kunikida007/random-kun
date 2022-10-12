@@ -8,29 +8,31 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     </head>
+    {% block content %}
     <body>
-        {% block content %}
-    <form action="{% url 'users:signup' %}" method="post">
-      {% csrf_token %}
-    　<div class="form-group">
-        <label for="exampleInputName">username</label>
-        <input type="text" name="username", class="form-control" id="exampleInputName" placeholder="名前を入力">
-      </div>
-      <div class="form-group">
-        <label for="exampleInputEmail1">Email address</label>
-        <input type="email", name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-      </div>
-      <div class="form-group">
-        <label for="exampleInputPassword1">Password</label>
-        <input type="password", name="password1" class="form-control" id="exampleInputPassword1" placeholder="Password">
-      </div>
-      <div class="form-group">
-        <label for="exampleInputPassword2">Password(確認用)</label>
-        <input type="password", name="password2" class="form-control" id="exampleInputPassword2" placeholder="Password">
-      </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <form method="post" action="{% url 'users:signup' %}" class="form-group">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">
+            {% for error in form.non_field_errors %}
+              <p{% if forloop.last %} class="mb-0"{% endif %}>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% for item in form %}
+            <div class="form-group">
+                <label for="{{item.id_for_label}}">{{item.label}}</label>
+                <input
+                    type="{{item.field.widget.input_type}}"
+                    class="form-control"
+                    {% if item.field.required %}required{% endif %}
+                    name="{{item.name}}"
+                    id="{{item.id_for_label}}">
+            </div>
+        {% endfor %}
+        <button type="submit" class="submit btn btn-primary">会員登録</button>
+        <input type="hidden" name="next" value="{{ next }}"/>
     </form>
-    {% endblock content %}
-        </body>
+  </body>
+  {% endblock %}
     </html>

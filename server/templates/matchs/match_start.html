@@ -1,3 +1,4 @@
+{% extends "common/base.html"%}
 {% load static %}
 <!DOCTYPE html>
 <html lang="jp">
@@ -8,10 +9,11 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <title>Document</title>
 </head>
+{% block content %}
 <body>
-  <form action="{% url 'matchs:match_start' id %}" method="post">
+  <form action="{% url 'matchs:match_start' match.id %}" method="post">
     {% csrf_token %}
-    {% for match_members in match_list %}
+    {% for match in match.match_list %}
     <button name=btn_game{{forloop.counter}}_end type="submit" class="btn btn-primary", >コート{{forloop.counter}}終了</button> 
     　<caption>コート{{forloop.counter}}</caption>
       <table class="table">
@@ -22,7 +24,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for team in match_members %}
+            {% for team in match %}
             <tr>
                 {% for name in team %}
                   <td>{{name}}</td>
@@ -31,8 +33,11 @@
             {% endfor %}
           </tbody>
       </table> 
-    {% endfor %} 
-    <button name=btn_start type="submit" class="btn btn-primary">start</button> 
+    {% endfor %}
+    <button name="btn_update" type="submit" class="btn btn-primary">修正する</button>
+    <button name="btn_random" type="submit" class="btn btn-primary">ランダム</button> 
+    <button name="btn_end" type="submit" class="btn btn-primary">終了</button> 
     </form>
   </body>
+  {% endblock %}
 </html>

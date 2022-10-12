@@ -18,11 +18,14 @@ class Match(TimeStampedModel):
         primary_key=True,
         editable=False,
     )
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     match_name = models.CharField(max_length=10)
     number_of_court = models.IntegerField()
     match_list = ArrayField(
-        ArrayField(ArrayField(models.CharField(max_length=10, null=True), null=True), default=list),
+        ArrayField(
+            ArrayField(models.CharField(max_length=10, null=True), null=True),
+            default=list,
+        ),
         default=list,
     )
 

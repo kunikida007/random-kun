@@ -17,7 +17,6 @@ class LogicService:
                     .order_by("?")
                     .first()
                 )
-                print(member.member_name, member.court_number)
                 member.court_number = self._court
                 member.save()
                 match_member[i].append(member.member_name)
@@ -40,6 +39,14 @@ class LogicService:
         self._match.save()
 
     def start_game(self):
+        self._match.match_list = []
+        self._match.save()
+        Member.objects.filter(match=self._match).update(court_number=0)
+        for i in range(self._match.number_of_court):
+            self.chose_random_member_first(i + 1)
+
+    def random_game(self):
+        Member.objects.filter(match=self._match).update(court_number=0)
         for i in range(self._match.number_of_court):
             self.chose_random_member_first(i + 1)
 

@@ -1,0 +1,26 @@
+{% extends "common/base.html"%}
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    </head>
+    {% block content %}
+    <body>
+        <form action="{% url 'common:home' %}" method="post">
+            {% csrf_token %}
+            <div class="d-grid gap-5 col-6 mx-auto content-center">
+            <button name=btn_start type="submit" class="btn btn-primary">乱数表を使う</button> 
+            {% if request.user.is_authenticated %}
+                <button name=btn_continue type="submit" class="btn btn-primary">続きから始める</button>  
+            {% endif %}
+            <button name=btn_match_detail type="submit" class="btn btn-primary">試合戦績(現在実装中)</button>
+            <button name=btn_match_detail type="submit" class="btn btn-primary">試合編集(現在実装中)</button>
+            </div>
+        </form>
+    </body>
+    {% endblock %}
+</html>
