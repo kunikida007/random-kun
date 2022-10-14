@@ -17,8 +17,15 @@
           {% for error in form.non_field_errors %}
             <p{% if forloop.last %} class="mb-0"{% endif %}>{{ error }}</p>
           {% endfor %}
-        </div>
       {% endif %}
+    <ul>
+      { % for error in form.title.errors %}
+      <li>
+        {{ error }}
+      </li>
+      {% endfor %}
+    </ul>
+        </div>
       {% for item in form %}
           <div class="form-group">
               <label for="{{item.id_for_label}}">{{item.label}}</label>
@@ -32,6 +39,7 @@
       {% endfor %}
       <button type="submit" class="submit btn btn-primary">ログイン</button>
       <input type="hidden" name="next" value="{{ next }}"/>
+      <input type="button" value="戻る" class="btn btn-primary" onClick="javascript:history.go(-1);">
   </form>
 </body>
 {% endblock %}

@@ -13,12 +13,19 @@
       <form method="post" action="{% url 'users:signup' %}" class="form-group">
         {% csrf_token %}
         {% if form.non_field_errors %}
-          <div class="alert alert-danger" role="alert">
-            {% for error in form.non_field_errors %}
-              <p{% if forloop.last %} class="mb-0"{% endif %}>{{ error }}</p>
-            {% endfor %}
-          </div>
-        {% endif %}
+        <div class="alert alert-danger" role="alert">
+          {% for error in form.non_field_errors %}
+            <p{% if forloop.last %} class="mb-0"{% endif %}>{{ error }}</p>
+          {% endfor %}
+        {%endif%}
+      {% for error in form.title.errors %}
+      <ul>
+        <div class="alert alert-danger" role="alert">
+          <li>
+            {{ error }}
+          </li>
+        </ul>
+      {% endfor %}
         {% for item in form %}
             <div class="form-group">
                 <label for="{{item.id_for_label}}">{{item.label}}</label>
@@ -31,6 +38,7 @@
             </div>
         {% endfor %}
         <button type="submit" class="submit btn btn-primary">会員登録</button>
+        <input type="button" value="戻る" class="btn btn-primary" onClick="javascript:history.go(-1);">
         <input type="hidden" name="next" value="{{ next }}"/>
     </form>
   </body>
