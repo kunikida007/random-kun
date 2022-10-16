@@ -22,7 +22,7 @@ load_dotenv()
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = "django-insecure-$zg0ds&%@pz$%$8-z-e8jtf^wd-&pj^b(m*&(acqn4%^d3vw_2"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
@@ -53,6 +53,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    'django.contrib.sessions.middleware.SessionMiddleware',
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
