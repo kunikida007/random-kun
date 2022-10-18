@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
@@ -34,7 +35,9 @@ class MatchView(TemplateView):
             return redirect("matchs:match_update", match.id)
 
 
-class MatchCreateView(View):
+class MatchCreateView(TemplateView):
+    template_name = "matchs/match_create.html"
+
     def post(self, request, *args, **kwargs):
         members_list = [
             name for name in request.POST.getlist("member_name") if name != None
@@ -42,6 +45,11 @@ class MatchCreateView(View):
         owner = request.user
         match_name = request.POST.get("match_name")
         number_of_court = request.POST.get("number_of_court")
+        if (int(number_of_court) * 4) > len(members_list):
+            request.session["data"] = request.POST
+            request.session["members_list"] = members_list
+            messages.error(request, "1コートの人数が4人以下になります。")
+            return redirect("matchs:match_create")
         if not owner.is_anonymous:
             match = Match.objects.create(
                 owner=owner,
@@ -60,8 +68,15 @@ class MatchCreateView(View):
         Member.objects.bulk_create(member_instance)
         return redirect("matchs:match", match.id)
 
-    def get(self, request, *args, **kwargs):
-        return render(request, "matchs/match_create.html")
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        extend = {
+            "members": self.request.session.get("members_list"),
+            "match_name": self.request.session["data"].get("match_name"),
+            "number_of_court": self.request.session["data"].get("number_of_court"),
+        }
+        ctx.update(extend)
+        return ctx
 
 
 class MatchStartView(TemplateView):
@@ -74,9 +89,7 @@ class MatchStartView(TemplateView):
             "match": match,
             "id": self.kwargs["match_id"],
         }
-        print(match.match_list)
         ctx.update(extend)
-        print(ctx)
         return ctx
 
     def post(self, request, *args, **kwargs):
@@ -85,9 +98,18 @@ class MatchStartView(TemplateView):
             LogicService(match=match).random_game()
         for i in range(match.number_of_court):
             if f"btn_game{i+1}_end" in request.POST:
-                LogicService(match, i + 1).next_game()
+                print(request.POST)
+                red = request.POST.get("redscore")
+                blue = request.POST.get("bluescore")
+                print(red, blue)
+                if not red or not blue:
+                    messages.error(request, "スコアを入力してください")
+                    return redirect("matchs:match_start", match.id)
+                LogicService(match, i + 1).next_game(
+                    court_number=i + 1, red=int(red), blue=int(blue)
+                )
         if "btn_end" in request.POST:
-            return redirect("common:home")
+            return redirect("matchs:match_results", match.id)
         if "btn_update" in request.POST:
             return redirect("matchs:match_update", match.id)
         return redirect("matchs:match_start", match.id)
@@ -106,7 +128,6 @@ class MatchContinueView(TemplateView, LoginRequiredMixin):
         return ctx
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)
         if "match" in request.POST:
             match_id = request.POST.get("match")
             return redirect("matchs:match", match_id)
@@ -136,10 +157,23 @@ class MatchUpdateView(TemplateView):
             match.match_name = match_name
             match.number_of_court = number_of_court
             match.save()
-            print(Member.objects.filter(match=match))
             Member.objects.filter(match=match).delete()
             member_instance = [
                 Member(member_name=name, match=match) for name in members_list
             ]
             Member.objects.bulk_create(member_instance)
             return redirect("matchs:match", match.id)
+
+
+class MatchResultsView(TemplateView):
+    template_name = "matchs/match_results.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        match = get_object_or_404(Match, pk=self.kwargs["match_id"])
+        members = Member.objects.filter(match=match)
+        LogicService().get_rank(members)
+        members = Member.objects.filter(match=match).order_by("-goals_score_rate")
+        extend = {"match": match, "members": members}
+        ctx.update(extend)
+        return ctx

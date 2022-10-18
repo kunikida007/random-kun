@@ -12,7 +12,6 @@
 {% block content %}
 <body>
     <body>
-        {% block content %}
 <form action="{% url 'matchs:match_update' match_id %}" method="post">
     {% csrf_token %}
   <div class="form-group", id="list">
@@ -48,8 +47,7 @@ $(document).on("click", ".del", function() {
     }
 });
 </script>
-{% endblock content %}
     </body>
 </body>
-{% endblock %}
+{% endblock content %}
 </html>

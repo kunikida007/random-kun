@@ -27,7 +27,7 @@ class Match(TimeStampedModel):
             default=list,
         ),
         default=list,
-    )
+    )    
 
     def __str__(self):
         return self.match_name
@@ -46,6 +46,9 @@ class Member(TimeStampedModel):
     member_name = models.CharField(max_length=10)
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     court_number = models.IntegerField(default=0)
+    goals_score = models.IntegerField(blank=True, null=True)
+    match_count = models.IntegerField(default=0)
+    goals_score_rate = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.member_name}-{self.match.match_name}"
