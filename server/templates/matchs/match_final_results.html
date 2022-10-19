@@ -41,8 +41,7 @@
                   {% endfor %}
                 </tbody>
             </table> 
-            <input type="button" value="試合に戻る" class="btn btn-primary" onClick="location.href='{% url 'matchs:match_start' match_id=match.id %}'">
-        <input type="button" value="試合を終了" class="btn btn-primary" onClick="location.href='{% url 'common:home' %}'">
+            <input type="button" value="試合を終了" class="btn btn-primary" onClick="location.href='{% url 'common:home'%}'">
         {% endblock %}
     </body>
 </html>

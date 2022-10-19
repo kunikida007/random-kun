@@ -13,8 +13,8 @@
 <body>
   <form class="form-inline" action="{% url 'matchs:match_start' match.id %}" method="post">
     {% csrf_token %}
-    {% for match in match.match_list %}
-    <label id=inputredscore>スコア</label>
+    {% for m in match.match_list %}
+    <font size="6">{{match.match_name}}</font>
       <table class="table">
           <thead>
             <tr>
@@ -27,7 +27,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for team in match %}
+            {% for team in m %}
             <tr>
                 {% for name in team %}
                   <td class="table-light">{{name}}</td>
@@ -58,7 +58,8 @@
     <div class="mt-3">
       <button name="btn_update" type="submit" class="btn btn-primary">修正する</button>
       <button name="btn_random" type="submit" class="btn btn-primary">ランダム</button> 
-      <button name="btn_end" type="submit" class="btn btn-primary">終了</button> 
+      <button name="btn_result" type="submit" class="btn btn-primary">現在の結果を見る</button> 
+      <button name="btn_end" type="submit" class="btn btn-primary">試合を終了</button> 
     </div>
     </form>
   </body>

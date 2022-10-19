@@ -45,11 +45,15 @@ class MatchCreateView(TemplateView):
         owner = request.user
         match_name = request.POST.get("match_name")
         number_of_court = request.POST.get("number_of_court")
-        if (int(number_of_court) * 4) > len(members_list):
-            request.session["data"] = request.POST
-            request.session["members_list"] = members_list
-            messages.error(request, "1コートの人数が4人以下になります。")
+        print(request.POST)
+        if "reset" in request.POST:
             return redirect("matchs:match_create")
+        if "submit" in request.POST:
+            if (int(number_of_court) * 4) > len(members_list):
+                request.session["data"] = request.POST
+                request.session["members_list"] = members_list
+                messages.error(request, "1コートの人数が4人以下になります。")
+                return redirect("matchs:match_create")
         if not owner.is_anonymous:
             match = Match.objects.create(
                 owner=owner,
@@ -70,12 +74,15 @@ class MatchCreateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        extend = {
-            "members": self.request.session.get("members_list"),
-            "match_name": self.request.session["data"].get("match_name"),
-            "number_of_court": self.request.session["data"].get("number_of_court"),
-        }
-        ctx.update(extend)
+        if self.request.session.get("data"):
+            extend = {
+                "members": self.request.session.get("members_list"),
+                "match_name": self.request.session.get("data").get("match_name"),
+                "number_of_court": self.request.session.get("data").get(
+                    "number_of_court"
+                ),
+            }
+            ctx.update(extend)
         return ctx
 
 
@@ -96,12 +103,12 @@ class MatchStartView(TemplateView):
         match = get_object_or_404(Match, id=self.kwargs["match_id"])
         if "btn_random" in request.POST:
             LogicService(match=match).random_game()
+        if "btn_result" in request.POST:
+            return redirect("matchs:match_results", match.id)
         for i in range(match.number_of_court):
             if f"btn_game{i+1}_end" in request.POST:
-                print(request.POST)
                 red = request.POST.get("redscore")
                 blue = request.POST.get("bluescore")
-                print(red, blue)
                 if not red or not blue:
                     messages.error(request, "スコアを入力してください")
                     return redirect("matchs:match_start", match.id)
@@ -109,7 +116,7 @@ class MatchStartView(TemplateView):
                     court_number=i + 1, red=int(red), blue=int(blue)
                 )
         if "btn_end" in request.POST:
-            return redirect("matchs:match_results", match.id)
+            return redirect("matchs:match_final_results", match.id)
         if "btn_update" in request.POST:
             return redirect("matchs:match_update", match.id)
         return redirect("matchs:match_start", match.id)
@@ -167,6 +174,20 @@ class MatchUpdateView(TemplateView):
 
 class MatchResultsView(TemplateView):
     template_name = "matchs/match_results.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        match = get_object_or_404(Match, pk=self.kwargs["match_id"])
+        members = Member.objects.filter(match=match)
+        LogicService().get_rank(members)
+        members = Member.objects.filter(match=match).order_by("-goals_score_rate")
+        extend = {"match": match, "members": members}
+        ctx.update(extend)
+        return ctx
+
+
+class MatchFinalResultsView(TemplateView):
+    template_name = "matchs/match_final_results.html"
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)

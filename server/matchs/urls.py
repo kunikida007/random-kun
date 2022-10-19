@@ -11,4 +11,5 @@ urlpatterns = [
     path("<uuid:match_id>", views.MatchView.as_view(), name="match"),
     path("<uuid:match_id>/start", views.MatchStartView.as_view(), name="match_start"),
     path("<uuid:match_id>/results", views.MatchResultsView.as_view(), name="match_results"),
+    path("<uuid:match_id>/final/results", views.MatchFinalResultsView.as_view(), name="match_final_results"),
 ]

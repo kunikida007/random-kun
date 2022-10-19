@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     </head>
     {% block content %}
+    <font size="6">ユーザー登録</font>
     <body>
       <form method="post" action="{% url 'users:signup' %}" class="form-group">
         {% csrf_token %}
@@ -35,6 +36,9 @@
                     {% if item.field.required %}required{% endif %}
                     name="{{item.name}}"
                     id="{{item.id_for_label}}">
+                {% if item.label == "パスワード" %}
+                <font size="2"> ※8文字以上かつ数字以外を含めて下さい</font>
+                {% endif %}
             </div>
         {% endfor %}
         {% if form.errors %}
@@ -45,8 +49,7 @@
                  {% endfor %}
             {% endif %}
         <button type="submit" class="submit btn btn-primary">会員登録</button>
-        <input type="button" value="戻る" class="btn btn-primary" onClick="javascript:history.go(-1);">
-        <input type="hidden" name="next" value="{{ next }}"/>
+        <input type="button" value="ホームに戻る" class="btn btn-primary" onClick="location.href='{% url 'common:home' %}'">
     </form>
   </body>
   {% endblock %}

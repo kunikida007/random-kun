@@ -30,7 +30,7 @@
         {% csrf_token %}
         <button name=btn_start type="submit" class="btn btn-primary">開始する</button>
         <button name=btn_update type="submit" class="btn btn-primary">修正する</button>
-        <input type="button" value="戻る" class="btn btn-primary" onClick="javascript:history.go(-1);"> 
+        <input type="button" value="ホームに戻る" class="btn btn-primary" onClick="location.href='{% url 'common:home' %}'">
     </form>
 </body>
 {% endblock %}

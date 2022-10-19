@@ -27,7 +27,8 @@ class Match(TimeStampedModel):
             default=list,
         ),
         default=list,
-    )    
+    )
+    limit_game_count = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.match_name
@@ -49,6 +50,7 @@ class Member(TimeStampedModel):
     goals_score = models.IntegerField(blank=True, null=True)
     match_count = models.IntegerField(default=0)
     goals_score_rate = models.IntegerField(default=0)
+    win = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.member_name}-{self.match.match_name}"
