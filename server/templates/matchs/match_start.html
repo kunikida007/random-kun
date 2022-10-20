@@ -56,12 +56,25 @@
   </div>
     {% endfor %}
     <div class="mt-3">
-      <button name="btn_update" type="submit" class="btn btn-primary">修正する</button>
+      <button name="btn_update" type="submit" class="btn btn-primary" onClick="disp()">修正する</button>
       <button name="btn_random" type="submit" class="btn btn-primary">ランダム</button> 
-      <button name="btn_result" type="submit" class="btn btn-primary">現在の結果を見る</button> 
-      <button name="btn_end" type="submit" class="btn btn-primary">試合を終了</button> 
+      <button type="submit" class="btn btn-primary" onClick="location.href='{% url 'matchs:match_results' match_id=match.id %}'">現在の結果を見る</button> 
+      <button name="btn_end" type="submit" class="btn btn-primary"　onClick="disp2()">試合を終了</button> 
     </div>
     </form>
   </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    function disp(){
+
+        window.alert('修正した場合現在までの順位がリセットされてしまいますがよろしいでしょうか。');
+
+    }
+    function disp2(){
+
+      window.alert('終了した場合、試合を再開することはできません。よろしいでしょうか。');
+
+  }
+    </script>
   {% endblock %}
 </html>

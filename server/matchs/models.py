@@ -29,18 +29,10 @@ class Match(TimeStampedModel):
         default=list,
     )
     limit_game_count = models.IntegerField(null=True, blank=True)
-
+    is_active = models.BooleanField(default)
+    
     def __str__(self):
         return self.match_name
-
-
-# class MemberQueryManager(models.Manager):
-#     def members_in_match(self, *args, **kwargs):
-#         return (
-#             self.get_queryset()
-#             .filter(id, *args, **kwargs)
-#             .values_list("member_name", flat=True)
-#         )
 
 
 class Member(TimeStampedModel):

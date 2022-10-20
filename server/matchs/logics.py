@@ -8,7 +8,7 @@ class LogicService:
         self._match = match
         self._court = court
 
-    def chose_random_member(self):
+    def generate_match_list(self):
         match_member = [[], []]
         for i in range(2):
             for _ in range(2):
@@ -60,7 +60,7 @@ class LogicService:
     def next_game(self, court_number, red, blue):
         self.update_score(court_number, red, blue)
         self.restore_members_status()
-        self.chose_random_member()
+        self.generate_match_list()
 
     def generate_goals_score(self, red, blue):
         red_goals_score = red - blue

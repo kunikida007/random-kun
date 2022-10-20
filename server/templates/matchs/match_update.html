@@ -33,7 +33,7 @@
   </div>
   {%endfor%}
   <button type="submit" name="btn_start" class="btn btn-primary">保存</button>
-  <input type="button" value="ホームに戻る" class="btn btn-primary" onClick="location.href='{% url 'common:home' %}'">
+  <input type="button" value="戻る" class="btn btn-primary" onClick="location.href='{% url 'matchs:match' match.id %}'">
 </form>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript">
