@@ -2,3 +2,4 @@ django == 4.1.1
 psycopg2 == 2.9.3
 python-dotenv == 0.21.0
 django-extra-views == 0.14.0
+django-mathfilters==1.0.0

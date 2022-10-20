@@ -1,4 +1,5 @@
-from django.db import transaction
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
@@ -7,6 +8,7 @@ from django.shortcuts import render
 
 from .models import Match, Member
 from .logics import LogicService
+from .services import MemberService
 
 
 class MatchView(TemplateView):
@@ -15,42 +17,51 @@ class MatchView(TemplateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         match = get_object_or_404(Match, pk=self.kwargs["match_id"])
-        ctx["match_name"] = match.match_name
-        ctx["id"] = match.id
-        ctx["number_of_member"] = Member.objects.filter(
-            match=self.kwargs["match_id"]
-        ).count()
-        ctx["member_names"] = Member.objects.filter(
-            match=self.kwargs["match_id"]
-        ).values_list("member_name", flat=True)
+        ctx["match"] = match
+        ctx["number_of_member"] = MemberService.count_members(match)
+        ctx["member_names"] = MemberService.get_filtered_member_names(match)
         return ctx
 
     def post(self, request, *args, **kwargs):
+        match = get_object_or_404(Match, id=self.kwargs["match_id"])
         if "btn_start" in request.POST:
-            match = get_object_or_404(Match, id=self.kwargs["match_id"])
             LogicService(match=match).start_game()
             return redirect("matchs:match_start", match.id)
 
 
-class MatchCreateView(View):
+class MatchCreateView(TemplateView):
+    template_name = "matchs/match_create.html"
+
     def post(self, request, *args, **kwargs):
-        members_list = request.POST.getlist("member_name")
+        members_list = MemberService.get_members_list(
+            request.POST.getlist("member_name")
+        )
         owner = request.user
         match_name = request.POST.get("match_name")
         number_of_court = request.POST.get("number_of_court")
-        match = Match.objects.create(
-            owner=owner,
-            match_name=match_name,
-            number_of_court=number_of_court,
-        )
-        member_instance = [
-            Member(member_name=name, match=match) for name in members_list
-        ]
-        Member.objects.bulk_create(member_instance)
-        return redirect("matchs:match", match.id)
+        if "btn_start" in request.POST:
+            if (int(number_of_court) * 4) > len(members_list):
+                request.session["data"] = request.POST
+                request.session["members_list"] = members_list
+                messages.error(request, "1コートの人数が4人以下になります。")
+                return redirect("matchs:match_create")
+            match = MemberService.create_match(owner, match_name, number_of_court)
+            MemberService.create_members(match, members_list)
+            return render("matchs:match", match.id)
 
-    def get(self, request, *args, **kwargs):
-        return render(request, "matchs/match_create.html")
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        # 入力が中断された場合のセッションの保存
+        if self.request.session.get("data"):
+            extend = {
+                "members": self.request.session.get("members_list"),
+                "match_name": self.request.session.get("data").get("match_name"),
+                "number_of_court": self.request.session.get("data").get(
+                    "number_of_court"
+                ),
+            }
+            ctx.update(extend)
+        return ctx
 
 
 class MatchStartView(TemplateView):
@@ -59,33 +70,92 @@ class MatchStartView(TemplateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         match = get_object_or_404(Match, id=self.kwargs["match_id"])
-        members_list = Member.objects.filter(match=self.kwargs["match_id"]).values_list(
-            "member_name", flat=True
-        )
         extend = {
             "match": match,
-            "members_list": members_list,
-            "start_match_list": match.match_list,
-            "id": self.kwargs["match_id"],
         }
         ctx.update(extend)
         return ctx
 
     def post(self, request, *args, **kwargs):
         match = get_object_or_404(Match, id=self.kwargs["match_id"])
-        members_list = Member.objects.filter(
-                    match=self.kwargs["match_id"]
-                ).values_list("member_name", flat=True)
-        context = {
-                    "match": match,
-                    "members_list": members_list,
-                    "match_list": match.match_list,
-                    "id": self.kwargs["match_id"],
-                }
-        if f"btn_shuffle" in request.POST:
-            LogicService(match=match).start()
+        if "btn_random" in request.POST:
+            LogicService(match=match).random_game()
         for i in range(match.number_of_court):
             if f"btn_game{i+1}_end" in request.POST:
-                LogicService(match, i+1).next_game()
-        # if "btn_end" in request.POST:    
-        return render(request, "matchs/match_start.html", context=context)
+                red = request.POST.get("redscore")
+                blue = request.POST.get("bluescore")
+                if not red or not blue:
+                    messages.error(request, "スコアを入力してください")
+                    return redirect("matchs:match_start", match.id)
+                LogicService(match, i + 1).next_game(
+                    court_number=i + 1, red=int(red), blue=int(blue)
+                )
+        if "btn_end" in request.POST:
+            return redirect("matchs:match_final_results", match.id)
+        if "btn_update" in request.POST:
+            return redirect("matchs:match_update", match.id)
+
+
+class MatchContinueView(TemplateView, LoginRequiredMixin):
+    template_name = "matchs/match_continue.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        matches = Match.objects.filter(owner=self.request.user, is_active=True)
+        extend = {
+            "matchs": matches,
+        }
+        ctx.update(extend)
+        return ctx
+
+
+class MatchUpdateView(TemplateView):
+    template_name = "matchs/match_update.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        match = get_object_or_404(Match, pk=self.kwargs["match_id"])
+        members = MemberService.get_filtered_member_names(match)
+        extend = {"match": match, "members": members}
+        ctx.update(extend)
+        return ctx
+
+    def post(self, request, *args, **kwargs):
+        if "btn_start" in request.POST:
+            MemberService.get_members_list(request.POST.getlist("member_name"))
+            match = get_object_or_404(Match, pk=self.kwargs["match_id"])
+            MemberService.update_match(
+                match,
+                request.POST.get("match_name"),
+                request.POST.get("number_of_court"),
+            )
+            MemberService.count_members(match)
+            return redirect("matchs:match", match.id)
+
+
+class MatchResultsView(TemplateView):
+    template_name = "matchs/match_results.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        match = get_object_or_404(Match, pk=self.kwargs["match_id"])
+        members = Member.objects.filter(match=match)
+        LogicService().get_rank(members)
+        members = Member.objects.filter(match=match).order_by("-goals_score_rate")
+        extend = {"match": match, "members": members}
+        ctx.update(extend)
+        return ctx
+
+
+class MatchFinalResultsView(TemplateView):
+    template_name = "matchs/match_final_results.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        match = get_object_or_404(Match, pk=self.kwargs["match_id"])
+        members = Member.objects.filter(match=match)
+        LogicService().get_rank(members)
+        members = Member.objects.filter(match=match).order_by("-goals_score_rate")
+        extend = {"match": match, "members": members}
+        ctx.update(extend)
+        return ctx

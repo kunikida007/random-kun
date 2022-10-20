@@ -1,3 +1,4 @@
+{% extends "common/base.html"%}
 {% load static %}
 <!DOCTYPE html>
 <html lang="jp">
@@ -8,31 +9,72 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <title>Document</title>
 </head>
+{% block content %}
 <body>
-  <form action="{% url 'matchs:match_start' id %}" method="post">
+  <form class="form-inline" action="{% url 'matchs:match_start' match.id %}" method="post">
     {% csrf_token %}
-    {% for match_members in match_list %}
-    <button name=btn_game{{forloop.counter}}_end type="submit" class="btn btn-primary", >コート{{forloop.counter}}終了</button> 
-    　<caption>コート{{forloop.counter}}</caption>
+    {% for m in match.match_list %}
+    <font size="6">{{match.match_name}}</font>
       <table class="table">
           <thead>
             <tr>
-              <th scope="col">青コーナー</th>
-              <th scope="col">赤コーナー</th>
+              <th scope="col">コート{{forloop.counter}}</th>
+              <th scope="col"></th>
+            </tr>
+            <tr>
+              <td scope="col" class="table-info">青コーナー</td>
+              <td scope="col" class="table-danger">赤コーナー</td>
             </tr>
           </thead>
           <tbody>
-            {% for team in match_members %}
+            {% for team in m %}
             <tr>
                 {% for name in team %}
-                  <td>{{name}}</td>
+                  <td class="table-light">{{name}}</td>
                 {% endfor %}
             </tr>
             {% endfor %}
           </tbody>
       </table> 
-    {% endfor %} 
-    <button name=btn_start type="submit" class="btn btn-primary">start</button> 
+      <div class="row">
+        <div class="form-group col-md-1">
+          <label for="inputredscore">試合スコア</label>
+          <input name="redscore"type="number" class="form-control" id="inputredscore" placeholder="赤">
+        </div>
+        <div class="form-group col-md-1">
+          <label for="inputbluescore"></label>
+          <input name="bluescore"type="number" class="form-control" id="inputbluescore" placeholder="青">
+        </div>
+        {% for message in messages %}
+        <div class="alert alert-danger" role="alert">
+          <p class="mb-0">{{ message }}</p>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="mt-3">
+    <button name=btn_game{{forloop.counter}}_end type="submit" class="btn btn-primary", >コート{{forloop.counter}}終了</button>
+  </div>
+    {% endfor %}
+    <div class="mt-3">
+      <button name="btn_update" type="submit" class="btn btn-primary" onClick="disp()">修正する</button>
+      <button name="btn_random" type="submit" class="btn btn-primary">ランダム</button> 
+      <button type="submit" class="btn btn-primary" onClick="location.href='{% url 'matchs:match_results' match_id=match.id %}'">現在の結果を見る</button> 
+      <button name="btn_end" type="submit" class="btn btn-primary"　onClick="disp2()">試合を終了</button> 
+    </div>
     </form>
   </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    function disp(){
+
+        window.alert('修正した場合現在までの順位がリセットされてしまいますがよろしいでしょうか。');
+
+    }
+    function disp2(){
+
+      window.alert('終了した場合、試合を再開することはできません。よろしいでしょうか。');
+
+  }
+    </script>
+  {% endblock %}
 </html>

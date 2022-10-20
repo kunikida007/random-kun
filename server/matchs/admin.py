@@ -8,7 +8,7 @@ class MatchAdmin(admin.ModelAdmin):
 
 
 class MemberAdmin(admin.ModelAdmin):
-    fields = ["member_name", "match"]
+    fields = ["member_name", "match", "court_number", "goals_score", "match_count"]
 
 
 admin.site.register(Match, MatchAdmin)

@@ -18,31 +18,31 @@ class Match(TimeStampedModel):
         primary_key=True,
         editable=False,
     )
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     match_name = models.CharField(max_length=10)
     number_of_court = models.IntegerField()
     match_list = ArrayField(
-        ArrayField(ArrayField(models.CharField(max_length=10, null=True), null=True), default=list),
+        ArrayField(
+            ArrayField(models.CharField(max_length=10, null=True), null=True),
+            default=list,
+        ),
         default=list,
     )
-
+    limit_game_count = models.IntegerField(null=True, blank=True)
+    is_active = models.BooleanField(default)
+    
     def __str__(self):
         return self.match_name
-
-
-# class MemberQueryManager(models.Manager):
-#     def members_in_match(self, *args, **kwargs):
-#         return (
-#             self.get_queryset()
-#             .filter(id, *args, **kwargs)
-#             .values_list("member_name", flat=True)
-#         )
 
 
 class Member(TimeStampedModel):
     member_name = models.CharField(max_length=10)
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     court_number = models.IntegerField(default=0)
+    goals_score = models.IntegerField(blank=True, null=True)
+    match_count = models.IntegerField(default=0)
+    goals_score_rate = models.IntegerField(default=0)
+    win = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.member_name}-{self.match.match_name}"

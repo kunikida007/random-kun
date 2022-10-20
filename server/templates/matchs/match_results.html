@@ -1,0 +1,48 @@
+{% extends "common/base.html"%}
+{%load mathfilters%}
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    </head>
+    <body>
+        {% block content %}
+        <font size="6">{{match.match_name}}</font>
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">順位</th>
+                    <th scope="col">ユーザー名</th>
+                    <th scope="col">得失点/試合数</th>
+                    <th scope="col">総得失点</th>
+                    <th scope="col">試合数</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for member in members %}
+                  <h3>{{member.goals_socre}}</h3>
+                  <tr>
+                        <td>{{forloop.counter}}位</td>
+                        <td>{{member.member_name}}</td>
+                        {% if member.goals_score == 0 or member.match_count == 0%}
+                        <td>0</td>
+                        {%else%}
+                        <td>{{member.goals_score|div:member.match_count}}</td>
+                        {%endif%}
+                        <td>{{member.goals_score}}</td>
+                        <td>{{member.match_count}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+            </table> 
+            <input type="button" value="試合に戻る" class="btn btn-primary" onClick="location.href='{% url 'matchs:match_start' match_id=match.id %}'">
+        <input type="button" value="試合を終了" class="btn btn-primary" onClick="location.href='{% url 'common:home' %}'">
+        {% endblock %}
+    </body>
+</html>
