@@ -1,6 +1,4 @@
-import random
-
-from .models import Match, Member
+from .models import Member
 
 
 class LogicService:

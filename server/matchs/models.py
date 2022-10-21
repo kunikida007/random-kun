@@ -1,4 +1,3 @@
-from email.policy import default
 import uuid as uuid_lib
 
 from django.contrib.auth import get_user_model

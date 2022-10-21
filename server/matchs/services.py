@@ -1,5 +1,3 @@
-import random
-
 from .models import Match, Member
 
 
