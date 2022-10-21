@@ -48,7 +48,6 @@ class MemberService:
         match.save()
         # 古いメンバーは消す
         Member.objects.filter(match=match).delete()
-    
-    @classmethod
-    def start_game_same(cls, match):
+
+ 
         

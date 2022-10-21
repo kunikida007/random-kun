@@ -38,7 +38,7 @@ class Match(TimeStampedModel):
         choices=MatchType.choices,
         default=MatchType.SAME,
     )
-    # is_active = models.BooleanField(default)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.match_name
