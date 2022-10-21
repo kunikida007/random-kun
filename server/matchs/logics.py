@@ -94,5 +94,7 @@ class LogicService:
                 goals_score_rate = member.goals_score / member.match_count
             except ZeroDivisionError:
                 goals_score_rate = 0
+            except TypeError:
+                goals_score_rate = 0
             member.goals_score_rate = goals_score_rate
             member.save()

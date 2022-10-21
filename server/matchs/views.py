@@ -82,19 +82,24 @@ class MatchStartView(TemplateView):
         if "btn_random" in request.POST:
             LogicService(match=match).random_game()
         for i in range(match.number_of_court):
-            if f"btn_game{i+1}_end" in request.POST:
-                red = request.POST.get("redscore")
-                blue = request.POST.get("bluescore")
+            print(i, request.POST)
+            if f"btn_game{i+1}_end" in request.POST or "btn_match_end" in request.POST:
+                red = request.POST.get(f"redscore{i+1}")
+                blue = request.POST.get(f"bluescore{i+1}")
                 if not red or not blue:
                     messages.error(request, "スコアを入力してください")
                     return redirect("matchs:match_start", match.id)
                 LogicService(match, i + 1).next_game(
                     court_number=i + 1, red=int(red), blue=int(blue)
                 )
+        if "btn_results" in request.POST:
+            print(1)
+            return redirect("matchs:match_results", match.id)
         if "btn_end" in request.POST:
             return redirect("matchs:match_final_results", match.id)
         if "btn_update" in request.POST:
             return redirect("matchs:match_update", match.id)
+        return redirect("matchs:match_start", match.id)
 
 
 class MatchContinueView(TemplateView, LoginRequiredMixin):
@@ -108,6 +113,12 @@ class MatchContinueView(TemplateView, LoginRequiredMixin):
         }
         ctx.update(extend)
         return ctx
+
+    def post(self, request, *args, **kwargs):
+        if "match" in request.POST:
+            print(request.POST)
+            match_id = request.POST.get("match")
+            return redirect("matchs:match", match_id)
 
 
 class MatchUpdateView(TemplateView):

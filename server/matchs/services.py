@@ -23,7 +23,7 @@ class MemberService:
                 owner=owner,
                 match_name=match_name,
                 number_of_court=number_of_court,
-                type=type
+                type=type,
             )
         return match
 
