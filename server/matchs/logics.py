@@ -45,13 +45,19 @@ class LogicService:
         for i in range(self._match.number_of_court):
             self.chose_random_member_first(i + 1)
 
+    def start_game_same(self):
+        Member.objects.filter(match=self._match).update(court_number=0)
+
     def random_game(self):
         self._match.match_list = []
         self._match.save()
         Member.objects.filter(match=self._match).update(court_number=0)
         for i in range(self._match.number_of_court):
             self.chose_random_member_first(i + 1)
-
+    
+    def restore_all_memebrs_status(self):
+        Member.objects.filter(match=self._match).update(court_number=0)
+        
     def restore_members_status(self):
         Member.objects.filter(match=self._match, court_number=self._court).update(
             court_number=0
@@ -81,7 +87,7 @@ class LogicService:
             member.goals_score = blue_goals_score
             member.match_count += 1
             member.save()
-    
+
     def get_rank(self, members):
         for member in members:
             try:

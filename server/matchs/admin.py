@@ -4,7 +4,7 @@ from .models import Match, Member
 
 
 class MatchAdmin(admin.ModelAdmin):
-    fields = ["owner", "match_name", "number_of_court", "match_list"]
+    fields = ["owner", "match_name", "number_of_court", "match_list", "type"]
 
 
 class MemberAdmin(admin.ModelAdmin):

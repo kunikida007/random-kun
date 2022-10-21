@@ -39,15 +39,16 @@ class MatchCreateView(TemplateView):
         owner = request.user
         match_name = request.POST.get("match_name")
         number_of_court = request.POST.get("number_of_court")
+        type = request.POST.get("match_type")
         if "btn_start" in request.POST:
             if (int(number_of_court) * 4) > len(members_list):
                 request.session["data"] = request.POST
                 request.session["members_list"] = members_list
                 messages.error(request, "1コートの人数が4人以下になります。")
                 return redirect("matchs:match_create")
-            match = MemberService.create_match(owner, match_name, number_of_court)
+            match = MemberService.create_match(owner, match_name, number_of_court, type)
             MemberService.create_members(match, members_list)
-            return render("matchs:match", match.id)
+            return redirect("matchs:match", match.id)
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)

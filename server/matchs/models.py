@@ -12,6 +12,10 @@ User = get_user_model()
 
 
 class Match(TimeStampedModel):
+    class MatchType(models.TextChoices):
+        SAME = "1", "同時進行"
+        FIRST = "2", "先取"
+
     id = models.UUIDField(
         verbose_name="試合ID",
         default=uuid_lib.uuid4,
@@ -28,9 +32,14 @@ class Match(TimeStampedModel):
         ),
         default=list,
     )
-    limit_game_count = models.IntegerField(null=True, blank=True)
-    is_active = models.BooleanField(default)
-    
+    type = models.CharField(
+        verbose_name="試合の種類",
+        max_length=15,
+        choices=MatchType.choices,
+        default=MatchType.SAME,
+    )
+    # is_active = models.BooleanField(default)
+
     def __str__(self):
         return self.match_name
 
