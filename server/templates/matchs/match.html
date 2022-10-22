@@ -2,13 +2,6 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="jp">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <title>Document</title>
-</head>
 {% block content %}
 <body>
     <table class="table">
@@ -30,8 +23,16 @@
         {% csrf_token %}
         <button name=btn_start type="submit" class="btn btn-primary">開始する</button>
         <input type="button" value="修正する" class="btn btn-primary" onClick="location.href='{% url 'matchs:match_update' match.id %}'">
-        <input type="button" value="ホームに戻る" class="btn btn-primary" onClick="location.href='{% url 'common:home' %}'">
+        <button name="btn_end" type="submit" class="btn btn-primary" onClick="disp()">ホームに戻る</button>
     </form>
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    function disp(){
+
+        window.alert('作った乱数表は保存されます。');
+
+    }
+  </script>
 {% endblock %}
 </html>

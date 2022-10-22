@@ -3,8 +3,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
-from django.views import View
-from django.shortcuts import render
 
 from .models import Match, Member
 from .logics import LogicService
@@ -27,6 +25,11 @@ class MatchView(TemplateView):
         if "btn_start" in request.POST:
             LogicService(match=match).start_game()
             return redirect("matchs:match_start", match.id)
+        if "btn_end" in request.POST:
+            if request.user.is_authenticated:
+                return redirect("common:home")
+            else:
+                return redirect("common:guest_home")
 
 
 class MatchCreateView(TemplateView):
@@ -171,3 +174,11 @@ class MatchFinalResultsView(TemplateView):
         extend = {"match": match, "members": members}
         ctx.update(extend)
         return ctx
+
+    def post(self, request, *args, **kwargs):
+        if "btn_end" in request.POST:
+            if request.user.is_authenticated:
+                return redirect("common:home")
+            else:
+                return redirect("common:guest_home")
+        return redirect("matchs:match_final_results", self.kwargs["match.id"])

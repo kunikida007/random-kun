@@ -29,10 +29,8 @@
       <a href="{% url 'common:guest_home' %}">登録せずに使う</a>
       <a href="{% url 'users:signup' %}">会員登録</a>
       </div>
+      <br>
       <button type="submit" class="submit btn btn-primary">ログイン</button>
-      <input type="hidden" name="next" value="{{ next }}"/>
-      <input type="button" value="ホームに戻る" class="btn btn-primary" onClick="location.href='{% url 'common:home' %}'">
-  </form>
 </body>
 {% endblock %}
 </html>
