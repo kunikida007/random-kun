@@ -14,25 +14,11 @@
             {% csrf_token %}
             <div class="d-grid gap-5 col-6 mx-auto content-center">
             <button name=btn_start type="submit" class="btn btn-primary">乱数表を作る</button>
-            {% if request.user.is_authenticated %}
             <button name=btn_continue type="submit" class="btn btn-primary">乱数表の続きを始める</button>  
             <button class="btn btn-secondary">自分の試合を記録(実装中)</button>
             <button  class="btn btn-secondary">自分の試合を見る(実装中)</button>
-            {% else %}
-            <button type="submit" class="btn btn-secondary" onClick="disp()">乱数表の続きを始める</button>  
-            <button type="submit" class="btn btn-secondary" onClick="disp()">自分の試合を記録</button>
-            <button type="submit" class="btn btn-secondary" onClick="disp()">自分の試合を見る</button>
-            {% endif %}
             </div>
         </form>
     </body>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript">
-    function disp(){
-
-        window.alert('ログインして頂くと使える機能です orz');
-
-    }
-    </script>
     {% endblock %}
 </html>

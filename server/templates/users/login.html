@@ -1,14 +1,6 @@
 {% extends "common/base.html"%}
 {% load static %}
-<!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>ログイン</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    </head>
     {% block content %}
     <font size="6">ログイン</font>
     <body>
@@ -32,6 +24,11 @@
                   id="{{item.id_for_label}}">
           </div>
       {% endfor %}
+      <br>
+      <div>
+      <a href="{% url 'common:guest_home' %}">登録せずに使う</a>
+      <a href="{% url 'users:signup' %}">会員登録</a>
+      </div>
       <button type="submit" class="submit btn btn-primary">ログイン</button>
       <input type="hidden" name="next" value="{{ next }}"/>
       <input type="button" value="ホームに戻る" class="btn btn-primary" onClick="location.href='{% url 'common:home' %}'">

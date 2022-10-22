@@ -1,0 +1,25 @@
+{% extends "common/base.html"%}
+{% load static %}
+<html>
+    {% block content %}
+    <body>
+        <form action="{% url 'common:guest_home' %}" method="post">
+            {% csrf_token %}
+            <div class="d-grid gap-5 col-6 mx-auto content-center">
+            <button name=btn_start type="submit" class="btn btn-primary">乱数表を作る</button>
+            <button type="submit" class="btn btn-secondary" onClick="disp()">乱数表の続きを始める</button>  
+            <button type="submit" class="btn btn-secondary" onClick="disp()">自分の試合を記録</button>
+            <button type="submit" class="btn btn-secondary" onClick="disp()">自分の試合を見る</button>
+            </div>
+        </form>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    function disp(){
+
+        window.alert('ログインして頂くと使える機能です orz');
+
+    }
+    </script>
+    {% endblock %}
+</html>

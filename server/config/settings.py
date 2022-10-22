@@ -25,7 +25,7 @@ load_dotenv()
 SECRET_KEY = "django-insecure-$zg0ds&%@pz$%$8-z-e8jtf^wd-&pj^b(m*&(acqn4%^d3vw_2"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv("DEBUG")
 ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "users.User"
 

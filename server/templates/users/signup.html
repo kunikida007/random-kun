@@ -41,6 +41,11 @@
                     {% endfor %}
                  {% endfor %}
             {% endif %}
+        <div>
+          <a href="{% url 'common:guest_home' %}">登録せずに使う</a>
+          <a href="{% url 'users:login' %}">ログイン</a>
+        </div>
+        <br>
         <button type="submit" class="submit btn btn-primary">会員登録</button>
         <input type="button" value="ホームに戻る" class="btn btn-primary" onClick="location.href='{% url 'common:home' %}'">
     </form>
