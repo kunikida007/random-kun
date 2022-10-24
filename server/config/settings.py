@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "common.apps.CommonConfig",
     "matchs.apps.MatchsConfig",
     "users.apps.UsersConfig",
+    "profiles.apps.ProfilesConfig",
     # 3rd party
     "mathfilters",
 ]
@@ -141,10 +142,12 @@ LOGIN_URL = "users:login"
 LOGIN_REDIRECT_URL = "common:home"
 LOGOUT_REDIRECT_URL = "common:home"
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_PORT = os.getenv("EMAIL_PORT")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
+SERVER_EMAIL = 'maroonv4869@gmail.com'
+
